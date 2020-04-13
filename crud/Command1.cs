@@ -176,14 +176,13 @@ namespace crud
 
         }
 
-
-        public string GetProps(Type classname)
+        public string GetPropsWithoutId(Type classname)
         {
             var props = classname.GetProperties();
             StringBuilder sb = new StringBuilder();
             foreach (var prop in props)
             {
-                if(prop.Name != "Id")
+                if (prop.Name != "Id")
                 {
                     sb.Append(prop.Name.ToLower());
                     if (props.Last().Name != prop.Name)
@@ -195,7 +194,7 @@ namespace crud
             return sb.ToString();
         }
 
-        public string GetPropsWithAtt(Type classname)
+        public string GetPropsWithAttWithoutId(Type classname)
         {
             var props = classname.GetProperties();
             StringBuilder sb = new StringBuilder();
@@ -213,6 +212,37 @@ namespace crud
             return sb.ToString();
         }
 
+        public string GetProps(Type classname)
+        {
+            var props = classname.GetProperties();
+            StringBuilder sb = new StringBuilder();
+            foreach (var prop in props)
+            {
+                sb.Append(prop.Name.ToLower());
+                if (props.Last().Name != prop.Name)
+                {
+                    sb.Append(", ");
+                }
+                
+            }
+            return sb.ToString();
+        }
+
+        public string GetPropsWithAtt(Type classname)
+        {
+            var props = classname.GetProperties();
+            StringBuilder sb = new StringBuilder();
+            foreach (var prop in props)
+            {
+                sb.Append("@" + prop.Name.ToLower());
+                if (props.Last().Name != prop.Name)
+                {
+                    sb.Append(", ");
+                }
+            }
+            return sb.ToString();
+        }
+
         public string Add(Type classname)
         {
             StringBuilder sb = new StringBuilder();
@@ -220,7 +250,7 @@ namespace crud
             sb.Append("\n{");
             sb.Append("\n\tusing IDbConnection dbConnection = Connection;");
             sb.Append("\n\tdbConnection.Open();");
-            sb.Append("\n\treturn dbConnection.QueryFirst<int>(\"INSERT INTO " + classname.Name.ToLower() + " (" + GetProps(classname) + ") VALUES(" + GetPropsWithAtt(classname) + ") RETURNING id\", item);");
+            sb.Append("\n\treturn dbConnection.QueryFirst<int>(\"INSERT INTO " + classname.Name.ToLower() + " (" + GetPropsWithoutId(classname) + ") VALUES(" + GetPropsWithAttWithoutId(classname) + ") RETURNING id\", item);");
             sb.Append("\n}");
             return sb.ToString();
         }
